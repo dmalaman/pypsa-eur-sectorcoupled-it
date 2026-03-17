@@ -16,8 +16,8 @@ remote:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
-  prefix: ""
-  name: ""
+  prefix: "prova_pr_daniele"
+  name: "testing_capacity_constraints"
   scenarios:
     enable: false
     file: config/scenarios.yaml
@@ -33,23 +33,7 @@ foresight: overnight
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#scenario
 # Wildcard docs in https://pypsa-eur.readthedocs.io/en/latest/wildcards.html
-
-scenario_base_parameters:
-  ItaliaDEIT:
-    country: "IT"
-    solar_totalcapacity: 121000
-    onwind_totalcapacity: 34000
-    offwind_totalcapacity: 12100
-    H2_Electrolysis_totalcapacity: 7000000
-    FR_totalexchange: 10000
-    CH_totalexchange: -2000
-    internalproduction_gas: 200000
-    biomethane_gas: 15000
-    import_gas: 50000
-    electrolysiscapacity_H2: 15000
-
 scenario:
-  scenariobase: "ItaliaDEIT"   # oppure "none"
   clusters:
   - 50
   opts:
@@ -58,6 +42,30 @@ scenario:
   - ''
   planning_horizons:
   - 2050
+
+pypsa_it:
+  enable: true
+
+  capacity_constraints:
+    enable: true
+    generators:
+      solar: ["==", 121000]
+      onwind: ["==", 34000]
+      offwind-ac: ["==", 12100]
+    hydrogen: {}
+    gas: {}
+
+  energy_constraints:
+    enable: true
+    generators: {}
+    hydrogen: {}
+    gas: {}
+
+  exchange_constraints:
+    enable: false
+    electricity:
+      FR: ["==", 10000]
+      CH: ["==", -2000]
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
 countries:
@@ -991,7 +999,7 @@ clustering:
       ramp_limit_down: max
   temporal:
     resolution_elec: false
-    resolution_sector: false
+    resolution_sector: 3H
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#adjustments
 adjustments:
@@ -1007,7 +1015,7 @@ adjustments:
 solving:
   options:
     clip_p_max_pu: 1.e-2
-    load_shedding: false
+    load_shedding: true
     curtailment_mode: false
     noisy_costs: true
     skip_iterations: true

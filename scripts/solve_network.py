@@ -43,14 +43,16 @@ import yaml
 from pypsa.descriptors import get_activity_mask
 from pypsa.descriptors import get_switchable_as_dense as get_as_dense
 
+from pathlib import Path
+
 # Per fare debug su VSCode
 # Ensure repo root on sys.path
 import sys
-from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]  # points to /dati/pampado/pypsa-eur
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.pypsa_it.constraints import add_pypsait_constraints
 from scripts._benchmark import memory_logger
 from scripts._helpers import (
     PYPSA_V1,
@@ -1351,6 +1353,10 @@ def extra_functionality(
 
     if config["sector"]["imports"]["enable"]:
         add_import_limit_constraint(n, snapshots)
+    
+    pypsait_cfg = config.get("pypsa_it", {})
+    if pypsait_cfg.get("enable", False):
+        add_pypsait_constraints(n, snapshots, pypsait_cfg)
 
     if n.params.custom_extra_functionality:
         source_path = n.params.custom_extra_functionality
@@ -1512,11 +1518,11 @@ if __name__ == "__main__":
         snakemake = mock_snakemake(
             "solve_sector_network",
             opts="",
-            clusters="adm",
-            configfiles=["config/sector-coupled-test/config.yaml"],
+            clusters="50",
+            configfiles=["config/config.foritaly.yaml"],
             sector_opts="",
             planning_horizons="2050",
-            run="italy__nuts3_pp"
+            # run="italy__nuts3_pp"
         )
     configure_logging(snakemake)
     set_scenario_config(snakemake)
