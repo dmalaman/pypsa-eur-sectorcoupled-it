@@ -1,0 +1,6 @@
+config_1 -> caso base con controllo delle taglie di rinnovabili e idrogeno
+config_2 -> caso con electricity distribution grid False - infatti meno problemi di produzione e solar matcha di più
+config_3 -> caso con linee non espandibili e senza distribution - si rifanno sulla produzione termoelettrica
+config_4 -> caso con linee non espandibili, ma distribuzione - sempre tanto termoelettrico
+config_5 -> cutout sarah-era per 2013-2014 - funziona meglio la produzione da solar
+config_6 -> lascio libero le taglie delle rinnovabili - cambia molto il solar, wind più o meno costante

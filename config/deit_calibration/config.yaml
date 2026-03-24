@@ -16,11 +16,11 @@ remote:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
-  prefix: "prova_pr_daniele"
-  name: "testing_capacity_constraints"
+  prefix: "deit_calibration"
+  name: deit_version_1
   scenarios:
     enable: false
-    file: config/scenarios.yaml
+    file: config/sensitivity_parameters/scenarios_sensitivity.yaml
   disable_progressbar: false
   shared_resources:
     policy: false
@@ -35,13 +35,13 @@ foresight: overnight
 # Wildcard docs in https://pypsa-eur.readthedocs.io/en/latest/wildcards.html
 scenario:
   clusters:
-  - 50
+  - 'adm'
   opts:
   - ''
   sector_opts:
   - ''
   planning_horizons:
-  - 2050
+  - 2040
 
 pypsa_it:
   enable: true
@@ -51,13 +51,13 @@ pypsa_it:
     generators:
       solar: ["==", 121000]
       onwind: ["==", 34000]
-      offwind-ac: ["==", 12100]
+      offwind-ac: ["==", 15100]
     hydrogen:
       electrolysis: ["==", 7000]
     gas: {}
 
   energy_constraints:
-    enable: true
+    enable: false
     generators: {}
     hydrogen: {}
     gas: {}
@@ -107,8 +107,8 @@ countries:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#snapshots
 snapshots:
-  start: "2013-01-01"
-  end: "2014-01-01"
+  start: "2019-01-01"
+  end: "2020-01-01"
   inclusive: 'left'
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#enable
@@ -152,7 +152,7 @@ electricity:
     H2: 168
 
   extendable_carriers:
-    Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT]
+    Generator: [solar, onwind, offwind-ac, OCGT, CCGT]
     StorageUnit: [] # battery, H2
     Store: [battery, H2]
     Link: [] # H2 pipeline
@@ -167,14 +167,14 @@ electricity:
   estimate_renewable_capacities:
     enable: true
     from_gem: true
-    year: 2020
+    year: 2019
     expansion_limit: false
     technology_mapping:
       Offshore: offwind-ac
       Onshore: onwind
       PV: solar
 
-  autarky:
+  autarky: # Might be useful if partially integrated
     enable: false
     by_country: false
 
@@ -183,20 +183,20 @@ electricity:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#atlite
 atlite:
   cutout_directory: cutouts
-  default_cutout: europe-2013-sarah3-era5
+  default_cutout: europe-2019-era5
   nprocesses: 16
   show_progress: false
   cutouts:
     # use 'base' to determine geographical bounds and time span from config
     # base:
       # module: era5
-    europe-2013-sarah3-era5:
-      module: [sarah, era5] # in priority order
+    europe-2019-era5:
+      module: [era5] # in priority order
       x: [-12., 42.]
       y: [33., 72.]
       dx: 0.3
       dy: 0.3
-      time: ['2013', '2013']
+      time: ['2019', '2019']
       # features: [] 
       # sarah_dir: ""
 
@@ -443,7 +443,7 @@ energy:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#biomass
 biomass:
-  year: 2030
+  year: 2040
   scenario: ENS_Med
   classes:
     solid biomass:
@@ -940,7 +940,7 @@ industry:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#costs
 costs:
-  year: 2050
+  year: 2040
   version: v0.13.3
   social_discountrate: 0.02
   fill_values:
@@ -974,9 +974,15 @@ costs:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#clustering
 clustering:
-  mode: busmap
+  mode: administrative
   administrative:
-    level: 1
+    level: 0
+    IT: 2
+    FR: 1
+    CH: 1
+    AT: 1
+    GR: 1
+    HR: 1
   focus_weights: false
   copperplate_regions: []
   build_bidding_zones:
@@ -1141,3 +1147,20 @@ solving:
   mem_mb: 128000
   memory_logging_frequency: 5 # in seconds
   runtime: 48h #runtime in humanfriendly style https://humanfriendly.readthedocs.io/en/latest/
+
+analysis_networks:
+  # sottocartella dentro RESULTS (= "results/" + RDIR) che contiene gli scenari
+  # es: "pre" oppure "sensitivity_2050/pre" a seconda di come l’hai strutturato
+  pre_dir: ""
+
+  # path ESATTO al network base (relativo o assoluto)
+  base_network_path: "results/simulation_2050/nuc/networks/base_s_adm___2050.nc"
+
+  # quali network prendere dentro ogni scenario
+  # opzione A: glob (prende tutti i .nc)
+  network_glob: "networks/*.nc"
+  # opzione B (se vuoi solo uno specifico): "networks/base_s_128_elec_lxopt_sector_all_2050.nc"
+
+  # output unico
+  output_excel: "csvs/analysis_networks_vs_base.xlsx"
+

@@ -154,8 +154,8 @@ if __name__ == "__main__":
         from scripts._helpers import mock_snakemake
 
         snakemake = mock_snakemake("build_hydro_profile",
-                                   configfiles=["config/sector-coupled-test/config_validation_2024.yaml"],
-                                   run="validation__europe_2024_nuts3",)
+                                   configfiles=["config/deit_calibration/config_5.yaml"],
+                                   run="",)
     configure_logging(snakemake)
     set_scenario_config(snakemake)
 
